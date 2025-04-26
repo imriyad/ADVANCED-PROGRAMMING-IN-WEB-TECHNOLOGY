@@ -1,44 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Customer } from './customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class CustomersService {
-    constructor(
-        @InjectRepository(Customer)
-        private customerRepo: Repository<Customer>,
-      ) {}
+  constructor(
+    @InjectRepository(Customer)
+    private customerRepo: Repository<Customer>,
+  ) {}
 
+  async saveData(data) {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10); // Hash password if present
+    }
+    return this.customerRepo.save(data);
+  }
 
-      saveData(data)
-    {
-       this.customerRepo.save(data)
-    }
-    allData()
-    {
-        return this.customerRepo.find()
-    }
-    getId(id)
-    {
-        return this.customerRepo.findOne({where:{id}})
-    }
-    deleteId(id){
-        this.customerRepo.delete(id)
-        return "Deleted"
-    }
-    async updateData(id,data)
-    {
-        const a=await this.customerRepo.findOne({where:{id}})
-        if(!a)
-        {
-             return " Not Found"
-        }
-        else{
-            const d=Object.assign(a,data)
-            this.customerRepo.save(d)
-            return "Updated"
-        }
-    }
+  allData() {
+    return this.customerRepo.find();
+  }
 
+  getId(id) {
+    return this.customerRepo.findOne({ where: { id } });
+  }
+
+  async deleteId(id) {
+    await this.customerRepo.delete(id);
+    return 'Deleted';
+  }
+
+  async updateData(id, data) {
+    const existing = await this.customerRepo.findOne({ where: { id } });
+    if (!existing) {
+      return 'Not Found';
+    }
+  }
 }

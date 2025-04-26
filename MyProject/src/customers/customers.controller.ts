@@ -1,7 +1,6 @@
 
 import { Body, Controller, Post, UsePipes, ValidationPipe, Get, Param ,Delete, Patch} from '@nestjs/common';
 import { CustomersService } from './customers.service';
-
 @Controller('customers')
 export class CustomersController {
       constructor(private readonly customersService: CustomersService) {}
@@ -36,8 +35,5 @@ export class CustomersController {
      {
       return this.customersService.updateData(id,data)
 
-     }
-
-     
-      
+     } 
 }
