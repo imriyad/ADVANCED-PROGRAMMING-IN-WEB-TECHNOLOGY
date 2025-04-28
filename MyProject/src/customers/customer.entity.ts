@@ -18,6 +18,9 @@ export class Customer {
   @Column()
   phone: string;
 
+  @Column({ default: 'temp_password' })
+ password: string;
+
   @OneToMany(() => Cart, (cart) => cart.customer)
   cart: Cart[];
 
@@ -25,9 +28,9 @@ export class Customer {
   wishlist: Wishlist[];
 
   @OneToMany(() => Review, (review) => review.customer)
-reviews: Review[];
+ reviews: Review[];
 
-@OneToMany(() => Address, (address) => address.customer)
-addresses: Address[];
+ @OneToMany(() => Address, (address) => address.customer)
+ addresses: Address[];
   
 }

@@ -10,4 +10,7 @@ export class CreateCustomerDto {
 
   @IsString()
   phone: string;
+
+  @IsNotEmpty()
+  password: string;
 }
