@@ -6,9 +6,6 @@ import { CreateProductDto } from './product.dto';
 
 @Injectable()
 export class ProductsService {
-  getOne(id: number) {
-    throw new Error('Method not implemented.');
-  }
   constructor(
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
@@ -19,8 +16,18 @@ export class ProductsService {
     return this.productRepo.save(newProduct);
   }
 
-  findAll() {
-    return this.productRepo.find();
+  async findAll(minPrice?: number, maxPrice?: number) {
+    const queryBuilder = this.productRepo.createQueryBuilder('product');
+
+    if (minPrice) {
+      queryBuilder.andWhere('product.price >= :minPrice', { minPrice });
+    }
+
+    if (maxPrice) {
+      queryBuilder.andWhere('product.price <= :maxPrice', { maxPrice });
+    }
+
+    return queryBuilder.getMany();
   }
 
   findOne(id: number) {
@@ -30,5 +37,4 @@ export class ProductsService {
   delete(id: number) {
     return this.productRepo.delete(id);
   }
-  
 }

@@ -52,8 +52,6 @@ export class CartService {
   async removeFromCart(cartId: number) {
     return this.cartRepo.delete(cartId);
   }
-  // src/cart/cart.service.ts
-
 async clearCart(customerId: number) {
     return this.cartRepo.delete({ customer: { id: customerId } });
   }

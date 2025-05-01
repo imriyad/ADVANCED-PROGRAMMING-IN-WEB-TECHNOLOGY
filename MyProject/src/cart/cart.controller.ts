@@ -1,4 +1,3 @@
-// src/cart/cart.controller.ts
 import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './cart.dto';
@@ -27,12 +26,8 @@ export class CartController {
     return this.cartService.removeFromCart(cartId);
   }
 
-  // src/cart/cart.controller.ts
-
 @Delete('clear/:customerId')
 clearCart(@Param('customerId') customerId: number) {
   return this.cartService.clearCart(customerId);
 }
-
-
 }

@@ -6,6 +6,8 @@ import { CartModule } from './cart/cart.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AddressModule } from './address/address.module';
+import { OrdersModule } from './orders/orders.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { AddressModule } from './address/address.module';
     WishlistModule,
     ReviewsModule,
     AddressModule,
+    OrdersModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [],

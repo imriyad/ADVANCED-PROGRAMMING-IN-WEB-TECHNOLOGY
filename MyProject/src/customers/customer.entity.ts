@@ -4,6 +4,7 @@ import { Wishlist } from "../wishlist/wishlist.entity";
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Review } from '../reviews/review.entity';
 import { Address } from '../address/address.entity'; 
+import { Order } from "src/orders/order.entity";
 @Entity()
 export class Customer {
   @PrimaryGeneratedColumn()
@@ -12,7 +13,7 @@ export class Customer {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -32,5 +33,9 @@ export class Customer {
 
  @OneToMany(() => Address, (address) => address.customer)
  addresses: Address[];
+
+ @OneToMany(() => Order, (order) => order.customer)
+orders: Order[];
+
   
 }

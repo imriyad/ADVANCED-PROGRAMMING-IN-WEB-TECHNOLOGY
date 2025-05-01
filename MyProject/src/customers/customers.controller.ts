@@ -1,16 +1,16 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe, Get, Param, Delete, Patch } from '@nestjs/common';
 import { CustomersService } from './customers.service';
-
+import { CreateCustomerDto } from 'src/DTO/customer.dto';
 @Controller('customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
+
   @Post()
-  @UsePipes(ValidationPipe)
-  saveData(@Body() data) {
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  saveData(@Body() data: CreateCustomerDto) {
     return this.customersService.saveData(data);
   }
-
   @Get()
   allData() {
     return this.customersService.allData();
@@ -41,4 +41,5 @@ export class CustomersController {
     const { email, password } = body;
     return this.customersService.login(email, password);
   }
+  
 }

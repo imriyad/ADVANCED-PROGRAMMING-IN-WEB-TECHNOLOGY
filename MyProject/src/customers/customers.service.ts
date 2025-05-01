@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { Customer } from './customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,32 +14,39 @@ export class CustomersService {
   ) {}
 
   async saveData(data) {
+    if (!data.email || !data.password || !data.name || !data.phone) {
+      throw new BadRequestException('All fields (name, email, phone, password) are required');
+    }
+  
+    const existing = await this.customerRepo.findOne({ where: { email: data.email } });
+    if (existing) {
+      throw new BadRequestException('Email already exists');
+    }
+  
     const hashedPassword = await bcrypt.hash(data.password, 10);
     data.password = hashedPassword;
     return this.customerRepo.save(data);
   }
+  
 
   allData() {
     return this.customerRepo.find();
   }
 
-  getId(id) {
+  getId(id: number) {
     return this.customerRepo.findOne({ where: { id } });
   }
 
-  async deleteId(id) {
+  async deleteId(id: number) {
     await this.customerRepo.delete(id);
     return 'Deleted';
   }
 
-  /*async updateData(id, data) {
-    const existing = await this.customerRepo.findOne({ where: { id } });
-    if (!existing) {
-      return 'Not Found';
-    }
-  }*/
-
   async login(email: string, password: string) {
+    if (!email || !password) {
+      throw new BadRequestException('Email and password are required');
+    }
+
     const customer = await this.customerRepo.findOne({ where: { email } });
     if (!customer) {
       throw new UnauthorizedException('Invalid credentials (email)');
@@ -60,6 +67,15 @@ export class CustomersService {
   }
 
   async createCustomer(name: string, email: string, phone: string, password: string) {
+    if (!name || !email || !phone || !password) {
+      throw new BadRequestException('All fields (name, email, phone, password) are required');
+    }
+
+    const existingCustomer = await this.customerRepo.findOne({ where: { email } });
+    if (existingCustomer) {
+      throw new BadRequestException('Email already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const customer = this.customerRepo.create({
       name,
@@ -67,10 +83,10 @@ export class CustomersService {
       phone,
       password: hashedPassword,
     });
-  
+
     return this.customerRepo.save(customer);
   }
-  
+
   async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
@@ -81,10 +97,22 @@ export class CustomersService {
       throw new UnauthorizedException('Customer not found');
     }
 
-    if (data.password) {
-      customer.password = data.password;
+    if (data.email !== undefined && !data.email) {
+      throw new BadRequestException('Email cannot be empty');
+    }
+    if (data.name !== undefined && !data.name) {
+      throw new BadRequestException('Name cannot be empty');
+    }
+    if (data.phone !== undefined && !data.phone) {
+      throw new BadRequestException('Phone cannot be empty');
+    }
+    if (data.password !== undefined && !data.password) {
+      throw new BadRequestException('Password cannot be empty');
     }
 
+    if (data.password) {
+      customer.password = await this.hashPassword(data.password);
+    }
     if (data.name) customer.name = data.name;
     if (data.email) customer.email = data.email;
     if (data.phone) customer.phone = data.phone;
@@ -94,5 +122,3 @@ export class CustomersService {
     return { message: 'Customer updated successfully' };
   }
 }
-  
-

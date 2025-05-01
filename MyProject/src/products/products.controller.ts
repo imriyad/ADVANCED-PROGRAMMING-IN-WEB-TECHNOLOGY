@@ -6,14 +6,16 @@ import { CreateProductDto } from './product.dto';
 export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
+  // Create a new product
   @Post()
   create(@Body() dto: CreateProductDto) {
     return this.productService.create(dto);
   }
 
+  // Get all products or filter by price range
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  findAll(@Query('minPrice') minPrice?: number, @Query('maxPrice') maxPrice?: number) {
+    return this.productService.findAll(minPrice, maxPrice);
   }
 
   @Get(':id')
@@ -25,5 +27,4 @@ export class ProductsController {
   delete(@Param('id') id: number) {
     return this.productService.delete(id);
   }
-
 }
